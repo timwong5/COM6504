@@ -27,3 +27,24 @@ async function initDatabase() {
     }
 }
 window.initDatabase = initDatabase;
+
+/**
+ * add the image and room into database which init before.
+ * @param data
+ * @returns {Promise<void>}
+ */
+async function addDataintoDb(data) {
+    if (db == null){
+        await initDatabase();
+    }
+    else {
+        try {
+            //Todo 
+
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+}
