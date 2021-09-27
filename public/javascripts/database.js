@@ -37,9 +37,9 @@ async function addDataintoDb(data) {
     if (db == null){
         await initDatabase();
     }
-    else {
+    else if (db){
         try {
-            //Todo 
+            //Todo
 
         }
         catch (error) {
