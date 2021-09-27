@@ -39,7 +39,8 @@ async function addDataintoDb(data) {
     }
     else if (db){
         try {
-            //Todo
+            let tx = await db.transaction(STORE_NAME, 'readwrite');
+            let store = await tx.objectStore(STORE_NAME);
 
         }
         catch (error) {
