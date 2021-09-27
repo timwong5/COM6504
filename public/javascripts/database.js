@@ -11,7 +11,7 @@ const STORE_NAME = 'data';
 
 async function initDatabase() {
     if (db == null) {
-        db = await idb.openDB(STORE_NAME_1, 2, {
+        db = await idb.openDB(STORE_NAME, 2, {
             upgrade: function (upgradeDb, oldVersion, newVersion) {
                 if (upgradeDb.objectStoreNames.contains(STORE_NAME) == null) {
                     let userDataDB = upgradeDb.createObjectStore(STORE_NAME,
