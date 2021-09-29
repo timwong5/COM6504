@@ -8,12 +8,18 @@ let socket=null;
  * it initialises the interface and the expected socket messages
  * plus the associated actions
  */
-function init() {
+async function init() {
     // it sets up the interface so that userId and room are selected
     document.getElementById('initial_form').style.display = 'block';
     document.getElementById('chat_interface').style.display = 'none';
 
     //@todo here is where you should initialise the socket operations as described in teh lectures (room joining, chat message receipt etc.)
+    if ('indexedDB' in window){
+        await initDatabase();
+    }
+    else {
+        console.log('The browser can not support indexedDB')
+    }
 }
 
 /**
