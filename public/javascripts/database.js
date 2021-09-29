@@ -16,10 +16,10 @@ async function initDatabase() {
                 if (upgradeDb.objectStoreNames.contains(STORE_NAME) == null) {
                     let userDataDB = upgradeDb.createObjectStore(STORE_NAME,
                         {keyPath: "id", autoIncrement: true});
-                    userDataDB.createIndex('imageUrl', 'imageUrl', {unique: false});
+                    userDataDB.createIndex('imageUrl', 'imageUrl', {unique: false, autoIncrement: false});
                     userDataDB.createIndex('roomID', 'roomID', {unique: false, autoIncrement: false});
-                    userDataDB.createIndex('annotations', 'annotations', {unique: false});
-                    userDataDB.createIndex('chat', 'chat', {unique: false});
+                    userDataDB.createIndex('annotations', 'annotations', {unique: false, autoIncrement: false});
+                    userDataDB.createIndex('chat', 'chat', {unique: false, autoIncrement: false});
                 }
             }
         });
