@@ -36,6 +36,7 @@ window.initDatabase = initDatabase;
 async function addDataintoDb(data) {
     if (db == null){
         await initDatabase();
+        console.log('db is created');
     }
     else if (db){
         try {

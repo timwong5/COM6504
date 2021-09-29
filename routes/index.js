@@ -22,9 +22,9 @@ router.post('/getdata', function (req, res) {
     res.setHeader('Content-Type','application/json');
     res.status(403).json({error: 403, reason: 'No ImageURL'});
   }
-  if (req.body.roomNumber == null){
+  if (req.body.roomID == null){
     res.setHeader('Content-Type','application/json');
-    res.status(403).json({error: 403, reason: 'No RoomNumber'});
+    res.status(403).json({error: 403, reason: 'No roomID'});
   }
 
 });
@@ -34,20 +34,20 @@ router.post('/getdata', function (req, res) {
  * create the ChatData class
  */
 class UsersData{
-  constructor(roomNumber, imageUrl) {
-    this.roomNumber = roomNumber;
+  constructor(roomID, imageUrl) {
+    this.roomID = roomID;
     this.imageUrl = imageUrl;
   }
 }
 
 /**
  * return the userchatData
- * @param roomNumber
+ * @param roomID
  * @param imageUrl
  * @returns {UsersData}
  */
-function getUsersData(roomNumber, imageUrl){
-  return new UsersData(roomNumber,imageUrl);
+function getUsersData(roomID, imageUrl){
+  return new UsersData(roomID,imageUrl);
 }
 
 module.exports = router;
