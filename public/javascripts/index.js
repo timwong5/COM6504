@@ -8,17 +8,24 @@ let socket=null;
  * it initialises the interface and the expected socket messages
  * plus the associated actions
  */
-async function init() {
+function init() {
     // it sets up the interface so that userId and room are selected
     document.getElementById('initial_form').style.display = 'block';
     document.getElementById('chat_interface').style.display = 'none';
 
     //@todo here is where you should initialise the socket operations as described in teh lectures (room joining, chat message receipt etc.)
     if ('indexedDB' in window){
-        await initDatabase();
+        initDatabase();
     }
     else {
         console.log('The browser can not support indexedDB')
+    }
+
+    // The service worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+            .register('./service-worker.js')
+            .then(function() { console.log('Service Worker is successfully applied'); });
     }
 }
 
