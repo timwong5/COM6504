@@ -25,7 +25,12 @@ function init() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
             .register('./service-worker.js')
-            .then(function() { console.log('Service Worker is successfully applied'); });
+            .then(function() { console.log('Service Worker is successfully applied');
+            },
+                function (error) {
+                    console.log("ServiceWorker registration failed", error);
+                }
+                );
     }
 }
 
