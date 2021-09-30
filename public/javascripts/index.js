@@ -34,7 +34,7 @@ function generateRoom() {
 
 /**
  * called when the Send button is pressed. It gets the text to send from the interface
- * and sends the message via  socket
+ * and sends the message via socket
  */
 function sendChatText() {
     let chatText = document.getElementById('chat_input').value;

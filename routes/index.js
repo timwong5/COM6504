@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/getdata', function (req, res) {
-  let roomNumber = req.body.roomNumber;
+  let roomNumber = req.body.roomID;
   let imageUrl = req.body.imageUrl;
   let usersData = getUsersData(roomNumber,imageUrl)
   res.setHeader('Content-Type', 'application/json');
