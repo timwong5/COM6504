@@ -1,7 +1,7 @@
 let name = null;
 let roomNo = null;
 let socket = io();
-let chat = null;
+let chat= io.connect('/chat');
 
 
 
@@ -10,20 +10,19 @@ let chat = null;
  * it initialises the interface and the expected socket messages
  * plus the associated actions
  */
-function init() {
+async function init() {
     // it sets up the interface so that userId and room are selected
     document.getElementById('initial_form').style.display = 'block';
     document.getElementById('chat_interface').style.display = 'none';
 
     //@todo here is where you should initialise the socket operations as described in teh lectures (room joining, chat message receipt etc.)
     if ('indexedDB' in window){
-        //error but dont know why
-        //need to solve
-        initDatabase();
+        await initDatabase();
     }
     else {
         console.log('The browser can not support indexedDB')
     }
+
 
     // The service worker
     if ('serviceWorker' in navigator) {
@@ -97,5 +96,41 @@ function hideLoginInterface(room, userId) {
     document.getElementById('chat_interface').style.display = 'block';
     document.getElementById('who_you_are').innerHTML= userId;
     document.getElementById('in_room').innerHTML= ' '+room;
+}
+
+function initChatSocket() {
+    // called when someone joins the room. If it is someone else it notifies the joining of the room
+    chat.on('joined', function (room, userId) {
+        if (userId === name) {
+            // it enters the chat
+            hideLoginInterface(room, userId);
+        } else {
+            // notifies that someone has joined the room
+            writeOnChatHistory('<b>' + userId + '</b>' + ' joined room ' + room);
+        }
+    });
+    // called when a message is received
+    chat.on('chat', function (room, userId, chatText) {
+        let who = userId
+        if (userId === name) who = 'Me';
+        writeOnChatHistory('<b>' + who + ':</b> ' + chatText);
+    });
+
+
+    /**
+     * it appends the given html text to the history div
+     * @param text: the text to append
+     */
+    function writeOnChatHistory(text) {
+        let history = document.getElementById('chat_history');
+        let paragraph = document.createElement('p');
+        paragraph.innerHTML = text;
+        history.appendChild(paragraph);
+
+        // make the element can scroll to the last one
+        history.scrollTop = history.scrollHeight;
+        document.getElementById('chat_input').value = '';
+    }
+
 }
 
