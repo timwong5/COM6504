@@ -7,7 +7,7 @@ let color = 'red', thickness = 4;
 
 /**
  * it inits the image canvas to draw on. It sets up the events to respond to (click, mouse on, etc.)
- * it is also the place where the data should be sent  via socket.io
+ * it is also the place where the data should be sent via socket.io
  * @param sckt the open socket to register events on
  * @param imageUrl teh image url to download
  */

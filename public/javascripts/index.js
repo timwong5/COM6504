@@ -1,6 +1,6 @@
 let name = null;
 let roomNo = null;
-let socket = io();
+let chat = io.connect('/chat');
 
 
 
@@ -56,7 +56,7 @@ function generateRoom() {
 function sendChatText() {
     let chatText = document.getElementById('chat_input').value;
     // @todo send the chat message
-    socket.emit('chat', roomNo, name, chatText);
+    chat.emit('chat', roomNo, name, chatText);
     console.log(chatText + ' is sent');
 }
 
@@ -70,7 +70,8 @@ function connectToRoom() {
     let imageUrl= document.getElementById('image_url').value;
     if (!name) name = 'Unknown-' + Math.random();
     //@todo join the room
-    initCanvas(socket, imageUrl);
+    chat.emit('create or join', roomNo, name);
+    initCanvas('chat', imageUrl);
     hideLoginInterface(roomNo, name);
 }
 
@@ -104,7 +105,7 @@ function hideLoginInterface(room, userId) {
 
 function initChatSocket() {
     // called when someone joins the room. If it is someone else it notifies the joining of the room
-    socket.on('joined', function (room, userId) {
+    chat.on('joined', function (room, userId) {
         if (userId === name) {
             // it enters the chat
             hideLoginInterface(room, userId);
@@ -114,7 +115,7 @@ function initChatSocket() {
         }
     });
     // called when a message is received
-    socket.on('chat', function (room, userId, chatText) {
+    chat.on('chat', function (room, userId, chatText) {
         let who = userId
         if (userId === name) who = 'Me';
         writeOnHistory('<b>' + who + ':</b> ' + chatText);

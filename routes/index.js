@@ -7,9 +7,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/getdata', function (req, res) {
-  let roomNumber = req.body.roomID;
+  let roomID = req.body.roomID;
   let imageUrl = req.body.imageUrl;
-  let usersData = getUsersData(roomNumber,imageUrl)
+  let usersData = getUsersData(roomID,imageUrl)
   res.setHeader('Content-Type', 'application/json');
   res.json(usersData);
 
