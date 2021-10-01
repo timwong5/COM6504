@@ -54,6 +54,8 @@ function generateRoom() {
 function sendChatText() {
     let chatText = document.getElementById('chat_input').value;
     // @todo send the chat message
+    chat.emit('chat', roomNo, name, chatText);
+
 }
 
 /**
@@ -106,31 +108,15 @@ function initChatSocket() {
             hideLoginInterface(room, userId);
         } else {
             // notifies that someone has joined the room
-            writeOnChatHistory('<b>' + userId + '</b>' + ' joined room ' + room);
+            writeOnHistory('<b>' + userId + '</b>' + ' joined room ' + room);
         }
     });
     // called when a message is received
     chat.on('chat', function (room, userId, chatText) {
         let who = userId
         if (userId === name) who = 'Me';
-        writeOnChatHistory('<b>' + who + ':</b> ' + chatText);
+        writeOnHistory('<b>' + who + ':</b> ' + chatText);
     });
-
-
-    /**
-     * it appends the given html text to the history div
-     * @param text: the text to append
-     */
-    function writeOnChatHistory(text) {
-        let history = document.getElementById('chat_history');
-        let paragraph = document.createElement('p');
-        paragraph.innerHTML = text;
-        history.appendChild(paragraph);
-
-        // make the element can scroll to the last one
-        history.scrollTop = history.scrollHeight;
-        document.getElementById('chat_input').value = '';
-    }
-
 }
+
 
