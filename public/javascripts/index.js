@@ -35,6 +35,8 @@ async function init() {
                 }
                 );
     }
+
+    initChatSocket();
 }
 
 /**
@@ -55,6 +57,7 @@ function sendChatText() {
     let chatText = document.getElementById('chat_input').value;
     // @todo send the chat message
     chat.emit('chat', roomNo, name, chatText);
+    console.log('text is sent')
 
 }
 
