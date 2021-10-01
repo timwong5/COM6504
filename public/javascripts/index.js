@@ -1,7 +1,6 @@
 let name = null;
 let roomNo = null;
 let socket = io();
-let chat= io.connect('/chat');
 
 
 
@@ -16,6 +15,8 @@ async function init() {
     document.getElementById('chat_interface').style.display = 'none';
 
     //@todo here is where you should initialise the socket operations as described in teh lectures (room joining, chat message receipt etc.)
+    initChatSocket();
+    
     if ('indexedDB' in window){
         await initDatabase();
     }
@@ -31,12 +32,11 @@ async function init() {
             .then(function() { console.log('Service Worker is successfully applied');
             },
                 function (error) {
-                    console.log("ServiceWorker registration failed", error);
+                    console.log("ServiceWorker applied failed", error);
                 }
                 );
     }
 
-    initChatSocket();
 }
 
 /**
@@ -56,9 +56,8 @@ function generateRoom() {
 function sendChatText() {
     let chatText = document.getElementById('chat_input').value;
     // @todo send the chat message
-    chat.emit('chat', roomNo, name, chatText);
-    console.log('text is sent')
-
+    socket.emit('chat', roomNo, name, chatText);
+    console.log(chatText + ' is sent');
 }
 
 /**
@@ -105,7 +104,7 @@ function hideLoginInterface(room, userId) {
 
 function initChatSocket() {
     // called when someone joins the room. If it is someone else it notifies the joining of the room
-    chat.on('joined', function (room, userId) {
+    socket.on('joined', function (room, userId) {
         if (userId === name) {
             // it enters the chat
             hideLoginInterface(room, userId);
@@ -115,7 +114,7 @@ function initChatSocket() {
         }
     });
     // called when a message is received
-    chat.on('chat', function (room, userId, chatText) {
+    socket.on('chat', function (room, userId, chatText) {
         let who = userId
         if (userId === name) who = 'Me';
         writeOnHistory('<b>' + who + ':</b> ' + chatText);
