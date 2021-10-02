@@ -1,5 +1,5 @@
 let name = null;
-let roomNo = null;
+let roomID = null;
 let chat = io.connect('/chat');
 
 
