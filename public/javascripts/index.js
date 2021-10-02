@@ -153,8 +153,27 @@ async function annotationData(room, canvasWidth, canvasHeight, x1, y1, x2, y2, c
         y2: y2,
         color: color,
         thickness: thickness,
-    }
-    await storeAnnotationData(annotationData).then();
+    };
+    await storeAnnotationData(annotationData);
 }
+
+/**
+ * to send the ajax query
+ * @param url
+ * @param data
+ */
+function sendAjaxQuery(url, data) {
+    $.ajax({
+        url: url,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        dataType: 'json',
+        type: 'POST',
+        success: function (dataR) {
+            // @todo
+        }
+    })
+}
+
 
 
