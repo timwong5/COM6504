@@ -29,25 +29,4 @@ router.post('/getdata', function (req, res) {
 
 });
 
-
-/**
- * create the ChatData class
- */
-class UsersData{
-  constructor(roomID, imageUrl) {
-    this.roomID = roomID;
-    this.imageUrl = imageUrl;
-  }
-}
-
-/**
- * return the userchatData
- * @param roomID
- * @param imageUrl
- * @returns {UsersData}
- */
-function getUsersData(roomID, imageUrl){
-  return new UsersData(roomID,imageUrl);
-}
-
 module.exports = router;

@@ -36,9 +36,13 @@ function initCanvas(sckt, imageUrl) {
         // if the flag is up, the movement of the mouse draws on the canvas
         if (e.type === 'mousemove') {
             if (flag) {
-                drawOnCanvas(ctx, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness);
-                // @todo if you draw on the canvas, you may want to let everyone know via socket.io (socket.emit...)  by sending them
+                drawOnCanvas(ctx, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness).then();
+                // if you draw on the canvas, you may want to let everyone know via socket.io (socket.emit...)  by sending them
                 // room, userId, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness
+                // emit the drawings
+                chat.emit('draw', room, userId, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness);
+                console.log('canvas emit')
+
             }
         }
     });
@@ -52,11 +56,17 @@ function initCanvas(sckt, imageUrl) {
 
     });
 
-    // @todo here you want to capture the event on the socket when someone else is drawing on their canvas (socket.on...)
+    // here you want to capture the event on the socket when someone else is drawing on their canvas (socket.on...)
     // I suggest that you receive userId, canvasWidth, canvasHeight, x1, y21, x2, y2, color, thickness
     // and then you call
     //     let ctx = canvas[0].getContext('2d');
     //     drawOnCanvas(ctx, canvasWidth, canvasHeight, x1, y21, x2, y2, color, thickness)
+
+    chat.on('drawing', function (room, userId, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness) {
+        let ctx = canvas[0].getContext('2d');
+        console.log('X:' + x2 + '  Y:' + y2 + "color: " + color + " thinckness: " + thickness);
+        drawOnCanvas(ctx, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness).then();
+    });
 
     // this is called when the src of the image is loaded
     // this is an async operation as it may take time
@@ -121,15 +131,17 @@ function drawImageScaled(img, canvas, ctx) {
  * @param color of the line
  * @param thickness of the line
  */
-function drawOnCanvas(ctx, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness) {
+async function drawOnCanvas(ctx, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness) {
     //get the ration between the current canvas and the one it has been used to draw on the other comuter
-    let ratioX= canvas.width/canvasWidth;
-    let ratioY= canvas.height/canvasHeight;
+    let ratioX = canvas.width / canvasWidth;
+    let ratioY = canvas.height / canvasHeight;
+
+    let roomID = document.getElementById('roomNo').value;
     // update the value of the points to draw
-    prevX*=ratioX;
-    prevY*=ratioY;
-    currX*=ratioX;
-    currY*=ratioY;
+    prevX *= ratioX;
+    prevY *= ratioY;
+    currX *= ratioX;
+    currY *= ratioY;
     ctx.beginPath();
     ctx.moveTo(prevX, prevY);
     ctx.lineTo(currX, currY);
@@ -137,4 +149,6 @@ function drawOnCanvas(ctx, canvasWidth, canvasHeight, prevX, prevY, currX, currY
     ctx.lineWidth = thickness;
     ctx.stroke();
     ctx.closePath();
+    await annotationData(roomID, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness);
+    console.log('annotation is stored');
 }

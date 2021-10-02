@@ -14,7 +14,7 @@ async function init() {
     document.getElementById('initial_form').style.display = 'block';
     document.getElementById('chat_interface').style.display = 'none';
 
-    //@todo here is where you should initialise the socket operations as described in teh lectures (room joining, chat message receipt etc.)
+    //@todo here is where you should initialise the socket operations as described in the lectures (room joining, chat message receipt etc.)
     initChatSocket();
     
     if ('indexedDB' in window){
@@ -45,8 +45,8 @@ async function init() {
  * so to make sure that the room number is not accidentally repeated across uses
  */
 function generateRoom() {
-    roomNo = Math.round(Math.random() * 10000);
-    document.getElementById('roomNo').value = 'R' + roomNo;
+    roomID = Math.round(Math.random() * 10000);
+    document.getElementById('roomNo').value = 'R' + roomID;
 }
 
 /**
@@ -56,7 +56,7 @@ function generateRoom() {
 function sendChatText() {
     let chatText = document.getElementById('chat_input').value;
     // @todo send the chat message
-    chat.emit('chat', roomNo, name, chatText);
+    chat.emit('chat', roomID, name, chatText);
     console.log(chatText + ' is sent');
 }
 
@@ -65,14 +65,14 @@ function sendChatText() {
  * interface
  */
 function connectToRoom() {
-    roomNo = document.getElementById('roomNo').value;
+    roomID = document.getElementById('roomNo').value;
     name = document.getElementById('name').value;
     let imageUrl= document.getElementById('image_url').value;
     if (!name) name = 'Unknown-' + Math.random();
     //@todo join the room
-    chat.emit('create or join', roomNo, name);
+    chat.emit('create or join', roomID, name);
     initCanvas('chat', imageUrl);
-    hideLoginInterface(roomNo, name);
+    hideLoginInterface(roomID, name);
 }
 
 /**
@@ -120,6 +120,41 @@ function initChatSocket() {
         if (userId === name) who = 'Me';
         writeOnHistory('<b>' + who + ':</b> ' + chatText);
     });
+}
+
+/**
+ * create the ChatData class
+ */
+class UsersData{
+    constructor(roomID, imageUrl) {
+        this.roomID = roomID;
+        this.imageUrl = imageUrl;
+    }
+}
+
+/**
+ * return the userChatData
+ * @param roomID
+ * @param imageUrl
+ * @returns {UsersData}
+ */
+function getUsersData(roomID, imageUrl){
+    return new UsersData(roomID,imageUrl);
+}
+
+async function annotationData(room, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness) {
+    let annotationData = {
+        room_id: room,
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        x1: x1,
+        y1: y2,
+        x2: x2,
+        y2: y2,
+        color: color,
+        thickness: thickness,
+    }
+    await storeAnnotationData(annotationData).then();
 }
 
 
