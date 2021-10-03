@@ -51,10 +51,14 @@ async function storeData(data, storeName){
         let tx = await db.transaction(storeName, 'readwrite');
         let store = await tx.objectStore(storeName);
         let index = await store.index('roomID');
+        console.log(index);
+        let userName = await store.index('who');
+        //console.log(chatData);
         //if the request roomID is exist, store the chatData to the IndexedDB into the right room
         let request = await index.getAll();
         if (request.length > 0){
             store.put(data, request.roomID);
+            //store.put(data, request.name);
         }
         //else create a new record
         else{

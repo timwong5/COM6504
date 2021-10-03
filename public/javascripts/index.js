@@ -88,8 +88,9 @@ function writeOnHistory(text) {
     history.appendChild(paragraph);
     // scroll to the last element
     history.scrollTop = history.scrollHeight;
-
-    let chatData = {roomID: document.getElementById("in_room").innerText, chat: document.getElementById('chat_input').value};
+    //create the chatData : roomID, userName and chat content
+    let chatData = {roomID: document.getElementById("in_room").innerText,
+        userName:name, chat: document.getElementById('chat_input').value};
     storeChatData(chatData).then();
     document.getElementById('chat_input').value = '';
 }
@@ -162,7 +163,7 @@ function sendAjaxQuery(url, data) {
                 if (loadData.length > 0) {
                     //get the chat data from idb
                     for (let i = 0; i < loadData.length; i++) {
-                        let content = '<b>' + 'history' + ': </b>' + loadData[i].chat + '<br>';
+                        let content = '<b>' + 'History' + ': </b>' + loadData[i].chat + '<br>';
                         //get the history from index.ejs file
                         let history = document.getElementById('history');
                         console.log(history);
@@ -171,7 +172,7 @@ function sendAjaxQuery(url, data) {
                     }
                 }
             });
-
+            //need to be fixed
             let annotationData = getAnnotationData(roomID);
             if (annotationData != null){
                 let cvx = document.getElementById('canvas');
@@ -191,8 +192,25 @@ function sendAjaxQuery(url, data) {
             }
 
         },
-        error: function (response) {
-            alert (response.responseText);
+        //When offline, the data need to be stored
+        error: async function (response) {
+            let roomID = dataR.userInfo.room;
+            await getChatData(roomID, (list) => {
+                console.log("=========");
+                let loadData = list;
+                console.log(list);
+                if (loadData.length > 0) {
+                    //get the chat data from idb
+                    for (let i = 0; i < loadData.length; i++) {
+                        let content = '<b>' + 'History' + ': </b>' + loadData[i].chat + '<br>';
+                        //get the history from index.ejs file
+                        let history = document.getElementById('history');
+                        console.log(history);
+                        //add the content to history
+                        history.innerHTML += content;
+                    }
+                }
+            });
         }
     })
 }
