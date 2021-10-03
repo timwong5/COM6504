@@ -11,18 +11,21 @@ const ANNOTATION_STORE_NAME = 'annotationData';
  */
 
 async function initDatabase() {
-    if (db == null) {
+    if (!db) {
         db = await idb.openDB(DB_NAME, 2, {
-            upgrade: function (upgradeDb, oldVersion, newVersion) {
-                if (upgradeDb.objectStoreNames.contains(CHAT_STORE_NAME) == null) {
+            upgrade(upgradeDb, oldVersion, newVersion) {
+                if (!upgradeDb.objectStoreNames.contains(CHAT_STORE_NAME)) {
                     let chatDataBase = upgradeDb.createObjectStore(CHAT_STORE_NAME,
-                        {keyPath: 'id', autoIncrement: false});
-                    chatDataBase.createIndex('roomID','id',{unique:true,multiEntry:true});
+                        {keyPath: 'id', autoIncrement: true});
+                    chatDataBase.createIndex('roomID','id',{unique:false,multiEntry:true});
+                    chatDataBase.createIndex('chat','id',{unique:false,multiEntry:true});
+                    chatDataBase.createIndex('who','id',{unique:false,multiEntry:true});
                 }
-                if (upgradeDb.objectStoreNames.contains(ANNOTATION_STORE_NAME) == null){
+                if (!upgradeDb.objectStoreNames.contains(ANNOTATION_STORE_NAME)){
                     let annotationDataBase = upgradeDb.createObjectStore(ANNOTATION_STORE_NAME,
                         {keyPath:'id', autoIncrement: true});
                     annotationDataBase.createIndex('roomID','id',{unique:false,multiEntry:true});
+                    annotationDataBase.createIndex('annotation','id',{unique:false,multiEntry:true});
                 }
 
             }
@@ -42,31 +45,30 @@ async function storeData(data, storeName){
         console.log('db is created');
     }
     else if (db){
-        try {
-            let tx = await db.transaction(storeName, 'readwrite');
-            let store = await tx.objectStore(storeName);
-            let index = await store.index('roomID');
 
-            //if the request roomID is exist, store the chatData to the IndexedDB into the right room
-            let request = await index.getAll(IDBKeyRange.only(data.roomID));
-            if (request.length > 0){
-                store.put(data, request.roomID);
-            }
-            //else create a new record
-            else{
-                store.put(data);
-            }
-            await tx.done;
-
-
+        let tx = await db.transaction(storeName, 'readwrite');
+        let store = await tx.objectStore(storeName);
+        let index = await store.index('roomID');
+        //if the request roomID is exist, store the chatData to the IndexedDB into the right room
+        let request = await index.getAll();
+        if (request.length > 0){
+            store.put(data, request.roomID);
         }
-        catch (error) {
-            console.log('error to store');
+        //else create a new record
+        else{
+            store.put(data);
         }
+        await tx.done;
+
+
+        // }
+        // catch (error) {
+        //     console.log('error to store');
+        // }
     }
 }
 
-async function getData(roomID, storeName){
+async function getData(roomID, storeName,callback){
     if (db == null){
         await initDatabase();
     }
@@ -77,10 +79,12 @@ async function getData(roomID, storeName){
             let store = await tx.objectStore(storeName);
             let index = await store.index('roomID');
 
-            let list = await index.getAll(IDBKeyRange.only(roomID));
+            let list = await index.getAll();
+            console.log(list.length);
             await tx.done;
             //set the array for chatHistory
             if (list.length > 0){
+                callback(list);
                 return list;
             }
             else{
@@ -124,8 +128,8 @@ window.storeAnnotationData = storeAnnotationData;
  * @param roomID
  * @returns {Promise<void>}
  */
-async function getChatData(roomID) {
-    await getData(roomID, CHAT_STORE_NAME);
+async function getChatData(roomID,callback) {
+    await getData(roomID, CHAT_STORE_NAME,callback);
 
 }
 window.getChatData = getChatData;

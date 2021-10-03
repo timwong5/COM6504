@@ -88,9 +88,10 @@ function writeOnHistory(text) {
     history.appendChild(paragraph);
     // scroll to the last element
     history.scrollTop = history.scrollHeight;
-    document.getElementById('chat_input').value = '';
-    let chatData = {roomID: document.getElementById('roomNo'), chat: document.getElementById('chat_history').innerHTML};
+
+    let chatData = {roomID: document.getElementById("in_room").innerText, chat: document.getElementById('chat_input').value};
     storeChatData(chatData).then();
+    document.getElementById('chat_input').value = '';
 }
 
 /**
@@ -172,17 +173,24 @@ function sendAjaxQuery(url, data) {
         contentType: 'application/json',
         dataType: 'json',
         type: 'POST',
-        success: function (dataR) {
-            let roomID = dataR.roomID;
-            let loadData = getChatData(roomID);
-                if (loadData != null){
+        success: async function (dataR) {
+            console.log(123456)
+            let roomID = dataR.userInfo.room;
+            getChatData(roomID,(list)=>{
+                console.log("=========");
+                let loadData = list;
+                console.log(list)
+                if (loadData.length > 0){
                     //Get the chat data from idb
-                    loadData = loadData[0].chat;
-                    let parser = new DOMParser();
-                    let doc = parser.parseFromString(loadData, 'text/html');
-                    let history = document.getElementById('chat_history');
-                    history.append(doc.body);
+                    for(let i = 0 ; i < loadData.length ; i ++){
+                        let content = '<b>' + "history" + ':</b>' + loadData[i].chat + '<br>';
+                        let history = document.getElementById('history');
+                        console.log(history);
+                        history.innerHTML += content;
+                    }
                 }
+            })
+
             let annotationData = getAnnotationData(roomID);
             if (annotationData != null){
                 let cvx = document.getElementById('canvas');
@@ -217,7 +225,7 @@ function onSubmit() {
     }
     // const data = JSON.stringify($(this).serializeArray());
 
-    sendAjaxQuery('/getdata', data);
+    sendAjaxQuery('/getUsersData', data);
     event.preventDefault();
 }
 
