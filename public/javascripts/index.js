@@ -89,6 +89,8 @@ function writeOnHistory(text) {
     // scroll to the last element
     history.scrollTop = history.scrollHeight;
     document.getElementById('chat_input').value = '';
+    let chatData = {roomID: document.getElementById('roomNo'), chat: document.getElementById('chat_history').innerHTML};
+    storeChatData(chatData).then();
 }
 
 /**
@@ -144,7 +146,7 @@ function getUsersData(roomID, imageUrl){
 
 async function annotationData(room, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness) {
     let annotationData = {
-        room_id: room,
+        roomID: room,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         x1: x1,
@@ -157,8 +159,9 @@ async function annotationData(room, canvasWidth, canvasHeight, x1, y1, x2, y2, c
     await storeAnnotationData(annotationData);
 }
 
+
 /**
- * to send the ajax query
+ * using ajax
  * @param url
  * @param data
  */
@@ -170,10 +173,54 @@ function sendAjaxQuery(url, data) {
         dataType: 'json',
         type: 'POST',
         success: function (dataR) {
-            // @todo
+            let roomID = dataR.roomID;
+            let loadData = getChatData(roomID);
+                if (loadData != null){
+                    //Get the chat data from idb
+                    loadData = loadData[0].chat;
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(loadData, 'text/html');
+                    let history = document.getElementById('chat_history');
+                    history.append(doc.body);
+                }
+            let annotationData = getAnnotationData(roomID);
+            if (annotationData != null){
+                let cvx = document.getElementById('canvas');
+                let ctx = cvx.getContext('2d');
+                for (let i = 0; i < annotationData.length; i++){
+                    let obj = annotationData[i];
+                    drawOnCanvas(ctx, obj.canvasWidth,
+                        obj.canvasHeight,
+                        obj.x1,
+                        obj.y1,
+                        obj.x2,
+                        obj.y2,
+                        obj.color,
+                        obj.thickness).then();
+                }
+
+            }
+
+        },
+        error: function (response) {
+            alert (response.responseText);
         }
     })
 }
+
+function onSubmit() {
+    // The .serializeArray() method creates a JavaScript array of objects
+    const formArray = $("form").serializeArray();
+    let data = {};
+    for (index in formArray) {
+        data[formArray[index].name] = formArray[index].value;
+    }
+    // const data = JSON.stringify($(this).serializeArray());
+
+    sendAjaxQuery('/getdata', data);
+    event.preventDefault();
+}
+
 
 
 

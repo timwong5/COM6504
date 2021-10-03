@@ -20,9 +20,9 @@ async function initDatabase() {
                     chatDataBase.createIndex('roomID','id',{unique:true,multiEntry:true});
                 }
                 if (upgradeDb.objectStoreNames.contains(ANNOTATION_STORE_NAME) == null){
-                    let annotationDataBase = upgradeDb.createObjectStore(ANNO_STORE_NAME,
-                        {keyPath:'id', autoIncrement: false});
-                    annotationDataBase.createIndex('roomID','id',{unique:true,multiEntry:true});
+                    let annotationDataBase = upgradeDb.createObjectStore(ANNOTATION_STORE_NAME,
+                        {keyPath:'id', autoIncrement: true});
+                    annotationDataBase.createIndex('roomID','id',{unique:false,multiEntry:true});
                 }
 
             }
@@ -89,8 +89,6 @@ async function getData(roomID, storeName){
         }
         catch (error) {
             console.log(error);
-        }{
-
         }
     }
 }
@@ -133,14 +131,36 @@ async function getChatData(roomID) {
 window.getChatData = getChatData;
 
 
-
 /**
- * get the annotation data
+ *
  * @param roomID
- * @returns {Promise<void>}
+ * @returns {Promise<any>}
  */
 async function getAnnotationData(roomID) {
-    await getData(roomID, ANNOTATION_STORE_NAME);
+    if (db == null){
+        await initDatabase();
+    }
+    else if (db){
+        try{
+            console.log('get the chatHistory '+ roomID );
+            let tx = await db.transaction(ANNOTATION_STORE_NAME, 'readonly');
+            let store = await tx.objectStore(ANNOTATION_STORE_NAME);
+            let index = await store.index('roomID');
+
+            let list = await index.getAll(IDBKeyRange.only(roomID));
+            await tx.done;
+            //set the array for chatHistory
+            if (list.length > 0){
+                return list;
+            }
+            else{
+                console.log('error to get chat History')
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
 
 }
 window.getAnnotationData = getAnnotationData;

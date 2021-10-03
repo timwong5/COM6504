@@ -66,6 +66,9 @@ function initCanvas(sckt, imageUrl) {
         let ctx = canvas[0].getContext('2d');
         console.log('X:' + x2 + '  Y:' + y2 + "color: " + color + " thinckness: " + thickness);
         drawOnCanvas(ctx, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness).then();
+        // let roomID = document.getElementById('roomNo').value;
+        // annotationData(roomID, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness).then();
+        // console.log('annotation is stored');
     });
 
     // this is called when the src of the image is loaded
