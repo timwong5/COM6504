@@ -17,6 +17,7 @@ async function initDatabase() {
                 if (!upgradeDb.objectStoreNames.contains(CHAT_STORE_NAME)) {
                     let chatDataBase = upgradeDb.createObjectStore(CHAT_STORE_NAME,
                         {keyPath: 'id', autoIncrement: true});
+                    //create the indexes of chat database
                     chatDataBase.createIndex('roomID','id',{unique:false,multiEntry:true});
                     chatDataBase.createIndex('chat','id',{unique:false,multiEntry:true});
                     chatDataBase.createIndex('who','id',{unique:false,multiEntry:true});
@@ -24,6 +25,7 @@ async function initDatabase() {
                 if (!upgradeDb.objectStoreNames.contains(ANNOTATION_STORE_NAME)){
                     let annotationDataBase = upgradeDb.createObjectStore(ANNOTATION_STORE_NAME,
                         {keyPath:'id', autoIncrement: true});
+                    //create the indexes of annotation database
                     annotationDataBase.createIndex('roomID','id',{unique:false,multiEntry:true});
                     annotationDataBase.createIndex('annotation','id',{unique:false,multiEntry:true});
                 }
@@ -59,12 +61,6 @@ async function storeData(data, storeName){
             store.put(data);
         }
         await tx.done;
-
-
-        // }
-        // catch (error) {
-        //     console.log('error to store');
-        // }
     }
 }
 
@@ -140,31 +136,8 @@ window.getChatData = getChatData;
  * @param roomID
  * @returns {Promise<any>}
  */
-async function getAnnotationData(roomID) {
-    if (db == null){
-        await initDatabase();
-    }
-    else if (db){
-        try{
-            console.log('get the chatHistory '+ roomID );
-            let tx = await db.transaction(ANNOTATION_STORE_NAME, 'readonly');
-            let store = await tx.objectStore(ANNOTATION_STORE_NAME);
-            let index = await store.index('roomID');
-
-            let list = await index.getAll(IDBKeyRange.only(roomID));
-            await tx.done;
-            //set the array for chatHistory
-            if (list.length > 0){
-                return list;
-            }
-            else{
-                console.log('error to get chat History')
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
+async function getAnnotationData(roomID,callback) {
+    await getData(roomID,ANNOTATION_STORE_NAME,callback);
 
 }
 window.getAnnotationData = getAnnotationData;

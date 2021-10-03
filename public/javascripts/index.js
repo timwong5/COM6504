@@ -69,7 +69,7 @@ function connectToRoom() {
     name = document.getElementById('name').value;
     let imageUrl= document.getElementById('image_url').value;
     if (!name) name = 'Unknown-' + Math.random();
-    //@todo join the room
+    //join the room
     chat.emit('create or join', roomID, name);
     initCanvas('chat', imageUrl);
     hideLoginInterface(roomID, name);
@@ -119,30 +119,10 @@ function initChatSocket() {
     });
     // called when a message is received
     chat.on('chat', function (room, userId, chatText) {
-        let who = userId
+        let who = userId;
         if (userId === name) who = 'Me';
         writeOnHistory('<b>' + who + ':</b> ' + chatText);
     });
-}
-
-/**
- * create the ChatData class
- */
-class UsersData{
-    constructor(roomID, imageUrl) {
-        this.roomID = roomID;
-        this.imageUrl = imageUrl;
-    }
-}
-
-/**
- * return the userChatData
- * @param roomID
- * @param imageUrl
- * @returns {UsersData}
- */
-function getUsersData(roomID, imageUrl){
-    return new UsersData(roomID,imageUrl);
 }
 
 async function annotationData(room, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness) {
@@ -162,7 +142,7 @@ async function annotationData(room, canvasWidth, canvasHeight, x1, y1, x2, y2, c
 
 
 /**
- * using ajax
+ * using ajax to communicate
  * @param url
  * @param data
  */
@@ -174,22 +154,23 @@ function sendAjaxQuery(url, data) {
         dataType: 'json',
         type: 'POST',
         success: async function (dataR) {
-            console.log(123456)
             let roomID = dataR.userInfo.room;
-            getChatData(roomID,(list)=>{
+            await getChatData(roomID, (list) => {
                 console.log("=========");
                 let loadData = list;
-                console.log(list)
-                if (loadData.length > 0){
-                    //Get the chat data from idb
-                    for(let i = 0 ; i < loadData.length ; i ++){
-                        let content = '<b>' + "history" + ':</b>' + loadData[i].chat + '<br>';
+                console.log(list);
+                if (loadData.length > 0) {
+                    //get the chat data from idb
+                    for (let i = 0; i < loadData.length; i++) {
+                        let content = '<b>' + 'history' + ': </b>' + loadData[i].chat + '<br>';
+                        //get the history from index.ejs file
                         let history = document.getElementById('history');
                         console.log(history);
+                        //add the content to history
                         history.innerHTML += content;
                     }
                 }
-            })
+            });
 
             let annotationData = getAnnotationData(roomID);
             if (annotationData != null){
@@ -216,6 +197,9 @@ function sendAjaxQuery(url, data) {
     })
 }
 
+/**
+ * to submit the form
+ */
 function onSubmit() {
     // The .serializeArray() method creates a JavaScript array of objects
     const formArray = $("form").serializeArray();
