@@ -20,7 +20,7 @@ async function initDatabase() {
                     //create the indexes of chat database
                     chatDataBase.createIndex('roomID','id',{unique:false,multiEntry:true});
                     chatDataBase.createIndex('chat','id',{unique:false,multiEntry:true});
-                    chatDataBase.createIndex('who','id',{unique:false,multiEntry:true});
+                    chatDataBase.createIndex('name','id',{unique:false,multiEntry:true});
                 }
                 if (!upgradeDb.objectStoreNames.contains(ANNOTATION_STORE_NAME)){
                     let annotationDataBase = upgradeDb.createObjectStore(ANNOTATION_STORE_NAME,
@@ -52,7 +52,7 @@ async function storeData(data, storeName){
         let store = await tx.objectStore(storeName);
         let index = await store.index('roomID');
         console.log(index);
-        let userName = await store.index('who');
+        let userName = await store.index('name');
         //console.log(chatData);
         //if the request roomID is exist, store the chatData to the IndexedDB into the right room
         let request = await index.getAll();
