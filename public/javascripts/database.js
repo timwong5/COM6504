@@ -53,8 +53,6 @@ async function storeData(data, storeName){
         console.log(store.index("roomID"));
 
         let index = await store.index('roomID');
-
-        //let userName = await store.index('name');
         //if the request roomID is exist, store the chatData to the IndexedDB into the right room
         let request = await index.getAll();
         if (request.length > 0){
