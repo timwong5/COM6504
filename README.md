@@ -9,6 +9,5 @@
 + When refresh the index page, console shows the service-worker "uncaught (in promise) typeerror: failed to execute 'addall' on 'cache': request failed"  
 try not refresh the page directly when testing the project. The service-worker can use when first enter the homepage.
 + Only can show the "History" in front of the users in Chat history - try to add.
-+ When users get chat history, they get a space line under the origin chat history.  
-+ It seems that the welcome information's problem - I don't know how to solve it.
++ When users get chat history, they get a space line under the origin chat history. It seems that the welcome information's problem - I don't know how to solve it.
 + Sometimes users can't get the image from the Internet - maybe cross-domain problem.
