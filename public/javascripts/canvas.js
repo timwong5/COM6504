@@ -156,6 +156,6 @@ async function drawOnCanvas(ctx, canvasWidth, canvasHeight, prevX, prevY, currX,
     ctx.stroke();
     ctx.closePath();
     await annotationData(roomID, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness);
-    console.log('annotation is stored');
+    //console.log('annotation is stored');
 }
-window.drawOnCanvas = drawOnCanvas
+window.drawOnCanvas = drawOnCanvas;

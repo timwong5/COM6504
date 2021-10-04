@@ -47,13 +47,14 @@ async function storeData(data, storeName){
         console.log('db is created');
     }
     else if (db){
-
         let tx = await db.transaction(storeName, 'readwrite');
         let store = await tx.objectStore(storeName);
+        console.log("index:")
+        console.log(store.index("roomID"));
+
         let index = await store.index('roomID');
-        console.log(index);
-        let userName = await store.index('name');
-        console.log(userName);
+
+        //let userName = await store.index('name');
         //if the request roomID is exist, store the chatData to the IndexedDB into the right room
         let request = await index.getAll();
         if (request.length > 0){
@@ -77,6 +78,7 @@ async function getData(roomID, storeName,callback){
             console.log('get the chatHistory '+ roomID );
             let tx = await db.transaction(storeName, 'readonly');
             let store = await tx.objectStore(storeName);
+
             let index = await store.index('roomID');
 
             let list = await index.getAll();
@@ -117,7 +119,9 @@ window.storeChatData = storeChatData;
  * @returns {Promise<void>}
  */
 async function storeAnnotationData(annotationData) {
-    await storeData(annotationData, ANNOTATION_STORE_NAME);
+    let annotation = {"roomID":annotationData.roomID,"annotation":annotationData};
+    console.log(annotation);
+    await storeData(annotation, ANNOTATION_STORE_NAME);
 }
 window.storeAnnotationData = storeAnnotationData;
 

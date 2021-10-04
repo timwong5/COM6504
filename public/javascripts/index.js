@@ -179,9 +179,7 @@ function sendAjaxQuery(url, data) {
         success: async function (dataR) {
             let roomID = dataR.userInfo.room;
             await getChatData(roomID, (list) => {
-                console.log("=========");
                 let loadData = list;
-                console.log(list);
                 if (loadData.length > 0) {
                     //get the chat data from idb
                     for (let i = 0; i < loadData.length; i++) {
@@ -195,23 +193,27 @@ function sendAjaxQuery(url, data) {
                 }
             });
             //need to be fixed
-            let annotationData = getAnnotationData(roomID);
-            if (annotationData != null){
-                let cvx = document.getElementById('canvas');
-                let ctx = cvx.getContext('2d');
-                for (let i = 0; i < annotationData.length; i++){
-                    let obj = annotationData[i];
-                    drawOnCanvas(ctx, obj.canvasWidth, obj.canvasHeight, obj.x1, obj.y1, obj.x2, obj.y2, obj.color, obj.thickness).then();
-                }
+            getAnnotationData(roomID,(list)=>{
+                let annotationData = list;
+                console.log("======");
+                console.log(list);
+                if (annotationData.length > 0){
+                    let cvx = document.getElementById('canvas');
+                    let ctx = cvx.getContext('2d');
+                    for (let i = 0; i < annotationData.length; i++){
+                        let obj = annotationData[i].annotation;
+                        drawOnCanvas(ctx, obj.canvasWidth, obj.canvasHeight, obj.x1, obj.y1, obj.x2, obj.y2, obj.color, obj.thickness).then();
+                    }
 
-            }
+                }
+            });
+
 
         },
         //When offline, the data need to be stored
         error: async function (response) {
             let roomID = dataR.userInfo.room;
             await getChatData(roomID, (list) => {
-                console.log("=========");
                 let loadData = list;
                 console.log(list);
                 if (loadData.length > 0) {
@@ -228,16 +230,20 @@ function sendAjaxQuery(url, data) {
             });
 
             //need to be fixed
-            let annotationData = getAnnotationData(roomID);
-            if (annotationData != null){
-                let cvx = document.getElementById('canvas');
-                let ctx = cvx.getContext('2d');
-                for (let i = 0; i < annotationData.length; i++){
-                    let obj = annotationData[i];
-                    drawOnCanvas(ctx, obj.canvasWidth, obj.canvasHeight, obj.x1, obj.y1, obj.x2, obj.y2, obj.color, obj.thickness).then();
-                }
+            getAnnotationData(roomID,(list)=>{
+                let annotationData = list;
+                console.log("======");
+                console.log(list);
+                if (annotationData.length > 0){
+                    let cvx = document.getElementById('canvas');
+                    let ctx = cvx.getContext('2d');
+                    for (let i = 0; i < annotationData.length; i++){
+                        let obj = annotationData[i].annotation;
+                        drawOnCanvas(ctx, obj.canvasWidth, obj.canvasHeight, obj.x1, obj.y1, obj.x2, obj.y2, obj.color, obj.thickness).then();
+                    }
 
-            }
+                }
+            });
         }
     })
 }
