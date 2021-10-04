@@ -8,6 +8,7 @@ let filesToCache = [
     "/javascripts/database.js",
     '/stylesheets/style.css',
     '/javascripts/idb/index.js',
+    "/javascripts/app.js",
     '/javascripts/idb/wrap-idb-value.js',
 ];
 
