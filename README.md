@@ -3,6 +3,8 @@
 `npm install`
 ## Run this project
 `npm run start`
+## Example Image URL
+`http://www.baidu.com/img/bdlogo.png`
 ## Errors need to be fixed
 + When refresh the index page, console shows the service-worker "uncaught (in promise) typeerror: failed to execute 'addall' on 'cache': request failed"
 + Can't get the annotation by ajax now - try to fix
