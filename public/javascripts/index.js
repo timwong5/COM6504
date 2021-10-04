@@ -179,14 +179,7 @@ function sendAjaxQuery(url, data) {
                 let ctx = cvx.getContext('2d');
                 for (let i = 0; i < annotationData.length; i++){
                     let obj = annotationData[i];
-                    drawOnCanvas(ctx, obj.canvasWidth,
-                        obj.canvasHeight,
-                        obj.x1,
-                        obj.y1,
-                        obj.x2,
-                        obj.y2,
-                        obj.color,
-                        obj.thickness).then();
+                    drawOnCanvas(ctx, obj.canvasWidth, obj.canvasHeight, obj.x1, obj.y1, obj.x2, obj.y2, obj.color, obj.thickness).then();
                 }
 
             }
@@ -211,7 +204,7 @@ function sendAjaxQuery(url, data) {
                     }
                 }
             });
-            
+
             //need to be fixed
             let annotationData = getAnnotationData(roomID);
             if (annotationData != null){
@@ -219,14 +212,7 @@ function sendAjaxQuery(url, data) {
                 let ctx = cvx.getContext('2d');
                 for (let i = 0; i < annotationData.length; i++){
                     let obj = annotationData[i];
-                    drawOnCanvas(ctx, obj.canvasWidth,
-                        obj.canvasHeight,
-                        obj.x1,
-                        obj.y1,
-                        obj.x2,
-                        obj.y2,
-                        obj.color,
-                        obj.thickness).then();
+                    drawOnCanvas(ctx, obj.canvasWidth, obj.canvasHeight, obj.x1, obj.y1, obj.x2, obj.y2, obj.color, obj.thickness).then();
                 }
 
             }
