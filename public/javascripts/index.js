@@ -90,7 +90,7 @@ function writeOnHistory(text) {
     history.scrollTop = history.scrollHeight;
     //create the chatData : roomID, userName and chat content
     let chatData = {roomID: document.getElementById("in_room").innerText,
-        userName:name, chat: document.getElementById('chat_input').value};
+        userName: document.getElementById('name').value, chat: document.getElementById('chat_input').value};
     storeChatData(chatData).then();
     document.getElementById('chat_input').value = '';
 }
