@@ -1,8 +1,19 @@
 let name = null;
 let roomID = null;
-let chat = io.connect('/chat');
+let chat = null;
+let online = null;
 
-
+window.addEventListener(
+    "load",
+    function (event) {
+        if (navigator.onLine) {
+            online = true;
+        } else {
+            online = false;
+        }
+    },
+    false
+);
 
 /**
  * called by <body onload>
@@ -15,8 +26,13 @@ async function init() {
     document.getElementById('chat_interface').style.display = 'none';
 
     //@todo here is where you should initialise the socket operations as described in the lectures (room joining, chat message receipt etc.)
-    initChatSocket();
-    
+    if (online){
+        chat = io.connect('/chat');
+    }
+    if (chat){
+        initChatSocket();
+    }
+
     if ('indexedDB' in window){
         await initDatabase();
     }
@@ -39,6 +55,8 @@ async function init() {
 
 }
 
+
+
 /**
  * called to generate a random room number
  * This is a simplification. A real world implementation would ask the server to generate a unique room number
@@ -56,8 +74,10 @@ function generateRoom() {
 function sendChatText() {
     let chatText = document.getElementById('chat_input').value;
     // @todo send the chat message
-    chat.emit('chat', roomID, name, chatText);
-    console.log(chatText + ' is sent');
+    if (chat) {
+        chat.emit('chat', roomID, name, chatText);
+        console.log(chatText + ' is sent');
+    }
 }
 
 /**
@@ -70,7 +90,9 @@ function connectToRoom() {
     let imageUrl= document.getElementById('image_url').value;
     if (!name) name = 'Unknown-' + Math.random();
     //join the room
-    chat.emit('create or join', roomID, name);
+    if (chat) {
+        chat.emit('create or join', roomID, name);
+    }
     initCanvas('chat', imageUrl);
     hideLoginInterface(roomID, name);
 }

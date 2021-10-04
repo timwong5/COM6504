@@ -40,8 +40,10 @@ function initCanvas(sckt, imageUrl) {
                 // if you draw on the canvas, you may want to let everyone know via socket.io (socket.emit...)  by sending them
                 // room, userId, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness
                 // emit the drawings
-                chat.emit('draw', room, userId, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness);
-                console.log('canvas emit')
+                if (chat) {
+                    chat.emit('draw', room, userId, canvas.width, canvas.height, prevX, prevY, currX, currY, color, thickness);
+                    console.log('canvas emit')
+                }
 
             }
         }
@@ -61,15 +63,16 @@ function initCanvas(sckt, imageUrl) {
     // and then you call
     //     let ctx = canvas[0].getContext('2d');
     //     drawOnCanvas(ctx, canvasWidth, canvasHeight, x1, y21, x2, y2, color, thickness)
-
-    chat.on('drawing', function (room, userId, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness) {
-        let ctx = canvas[0].getContext('2d');
-        console.log('X:' + x2 + '  Y:' + y2 + "color: " + color + " thinckness: " + thickness);
-        drawOnCanvas(ctx, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness).then();
-        // let roomID = document.getElementById('roomNo').value;
-        // annotationData(roomID, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness).then();
-        // console.log('annotation is stored');
-    });
+    if (chat) {
+        chat.on('drawing', function (room, userId, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness) {
+            let ctx = canvas[0].getContext('2d');
+            console.log('X:' + x2 + '  Y:' + y2 + "color: " + color + " thinckness: " + thickness);
+            drawOnCanvas(ctx, canvasWidth, canvasHeight, x1, y1, x2, y2, color, thickness).then();
+            // let roomID = document.getElementById('roomNo').value;
+            // annotationData(roomID, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness).then();
+            // console.log('annotation is stored');
+        });
+    }
 
     // this is called when the src of the image is loaded
     // this is an async operation as it may take time
@@ -155,3 +158,4 @@ async function drawOnCanvas(ctx, canvasWidth, canvasHeight, prevX, prevY, currX,
     await annotationData(roomID, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness);
     console.log('annotation is stored');
 }
+window.drawOnCanvas = drawOnCanvas
