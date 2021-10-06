@@ -5,6 +5,8 @@
 `npm run start`
 ## Example Image URL
 `http://www.baidu.com/img/bdlogo.png`
+## To read the documentation
+Click the doc\index.html to read it
 ## Errors need to be fixed
 + Need to claer the Browser Data at the first time running
 + The speed of getting the annotation data is too slow - I don't know why.
