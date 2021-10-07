@@ -33,7 +33,7 @@ async function init() {
         initChatSocket();
     }
 
-    if (indexedDB in window){
+    if ('indexedDB' in window){
         await initDatabase();
     }
     else {
@@ -213,7 +213,7 @@ function sendAjaxQuery(url, data) {
         },
         //When offline, the data need to be stored
         error: async function (response) {
-            let roomID = dataR.userInfo.room;
+            let roomID = response.userInfo.room;
             await getChatData(roomID, (list) => {
                 let loadData = list;
                 console.log(list);
