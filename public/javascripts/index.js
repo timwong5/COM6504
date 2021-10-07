@@ -24,16 +24,16 @@ async function init() {
     // it sets up the interface so that userId and room are selected
     document.getElementById('initial_form').style.display = 'block';
     document.getElementById('chat_interface').style.display = 'none';
-
     //@todo here is where you should initialise the socket operations as described in the lectures (room joining, chat message receipt etc.)
     if (online){
+        console.log("=====");
         chat = io.connect('/chat');
     }
     if (chat){
         initChatSocket();
     }
 
-    if ('indexedDB' in window){
+    if (indexedDB in window){
         await initDatabase();
     }
     else {
@@ -77,6 +77,7 @@ function sendChatText() {
     if (chat) {
         chat.emit('chat', roomID, name, chatText);
         console.log(chatText + ' is sent');
+        writeOnHistory(chatText);
     }
 }
 
@@ -113,6 +114,7 @@ function writeOnHistory(text) {
     //create the chatData : roomID, userName and chat content
     let chatData = {roomID: document.getElementById("in_room").innerText,
         userName: document.getElementById('name').value, chat: document.getElementById('chat_input').value};
+    console.log(chatData);
     storeChatData(chatData).then();
     document.getElementById('chat_input').value = '';
 }
@@ -177,8 +179,9 @@ function sendAjaxQuery(url, data) {
         dataType: 'json',
         type: 'POST',
         success: async function (dataR) {
+            console.log("read from history");
             let roomID = dataR.userInfo.room;
-            await getChatData(roomID, (list) => {
+            getChatData(roomID,(list) => {
                 let loadData = list;
                 if (loadData.length > 0) {
                     //get the chat data from idb
@@ -193,10 +196,8 @@ function sendAjaxQuery(url, data) {
                 }
             });
             //need to be fixed
-            getAnnotationData(roomID,(list)=>{
+            await getAnnotationData(roomID,(list)=>{
                 let annotationData = list;
-                console.log("======");
-                console.log(list);
                 if (annotationData.length > 0){
                     let cvx = document.getElementById('canvas');
                     let ctx = cvx.getContext('2d');

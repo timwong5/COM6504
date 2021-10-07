@@ -1,3 +1,4 @@
+let datacacheName = 'com6504Data-cache';
 let cacheName = 'com6504-cache';
 let filesToCache = [
     '/',
