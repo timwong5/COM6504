@@ -34,7 +34,7 @@ async function init() {
     }
 
     if ('indexedDB' in window){
-        await initDatabase();
+        await window.initDatabase();
     }
     else {
         console.log('The browser can not support indexedDB')
