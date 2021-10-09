@@ -9,7 +9,6 @@ router.get('/', function(req, res, next) {
 router.post('/getUsersData', function (req, res) {
   let roomID = req.body.roomNo;
   let imageUrl = req.body.image_url;
-
   let resData = {
       "userInfo":
           {

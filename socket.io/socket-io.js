@@ -23,6 +23,7 @@ exports.init = function(io) {
         socket.broadcast.emit('drawing', roomID, userId, canvasWidth, canvasHeight, prevX, prevY, currX, currY, color, thickness);
       });
     } catch (e) {
+      console.log(e);
     }
   });
 }
