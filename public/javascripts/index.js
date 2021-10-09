@@ -46,11 +46,7 @@ async function init() {
         navigator.serviceWorker
             .register('./service-worker.js')
             .then(function() { console.log('Service Worker is successfully applied');
-            },
-                function (error) {
-                    console.log("ServiceWorker applied failed", error);
-                }
-                );
+            });
     }
 
 }
@@ -102,18 +98,40 @@ function connectToRoom() {
  * this is to be called when the socket receives the chat message (socket.on ('message'...)
  * @param text: the text to append
  */
-function writeOnHistory(text) {
+function writeOnHistory(userid,text) {
     if (text==='') return;
+	let text2 = text;
     let history = document.getElementById('history');
     let paragraph = document.createElement('p');
-    paragraph.innerHTML = text;
+	
+	paragraph.style.setProperty("margin",'0px', 'important');
+	paragraph.style.setProperty("padding",'0px', 'important');
+	
+	
+	let currentUser = document.getElementById('name').value;
+    if(userid == currentUser){
+		text = "<b>"+"Me"+":</b>" + text;
+	}else{
+		if(userid){
+			text = "<b>"+userid+":</b>" + text;
+		}
+	}
+	
+	paragraph.innerHTML = text;
     history.appendChild(paragraph);
+	
+	
     // scroll to the last element
     history.scrollTop = history.scrollHeight;
     //create the chatData : roomID, userName and chat content
-    let chatData = {roomID: document.getElementById("in_room").innerText,
-        userName: document.getElementById('name').value, chat: document.getElementById('chat_input').value};
+	if(!userid){
+		userid = "";
+	}
+	
+	let chatData = {roomID: document.getElementById("in_room").innerText,userName: userid , chat: text2};
+	console.log("going to insert data:"+JSON.stringify(chatData));
     storeChatData(chatData).then();
+    
     document.getElementById('chat_input').value = '';
 }
 
@@ -137,14 +155,14 @@ function initChatSocket() {
             hideLoginInterface(room, userId);
         } else {
             // notifies that someone has joined the room
-            writeOnHistory('<b>' + userId + '</b>' + ' joined room ' + room);
+            writeOnHistory(false,'<b>' + userId + '</b>' + ' joined room ' + room);
         }
     });
     // called when a message is received
     chat.on('chat', function (room, userId, chatText) {
         let who = userId;
         if (userId === name) who = 'Me';
-        writeOnHistory('<b>' + who + ':</b> ' + chatText);
+        writeOnHistory(userId, chatText);
     });
 }
 
@@ -181,14 +199,30 @@ function sendAjaxQuery(url, data) {
             await getChatData(roomID, (list) => {
                 let loadData = list;
                 if (loadData.length > 0) {
-                    //get the chat data from idb
                     for (let i = 0; i < loadData.length; i++) {
-                        let content = '<b>' + 'History' + ': </b>' + loadData[i].chat + '<br>';
-                        //get the history from index.ejs file
-                        let history = document.getElementById('history');
-                        console.log(history);
-                        //add the content to history
-                        history.innerHTML += content;
+						console.log("roomID:"+roomID);
+						console.log(  "loadData[i].roomID:"+loadData[i].roomID);
+						if(roomID == loadData[i].roomID){
+							let content = loadData[i].chat ;
+							let history = document.getElementById('history');
+							let paragraph = document.createElement('p');
+							paragraph.style.setProperty("margin",'0px', 'important');
+							paragraph.style.setProperty("padding",'0px', 'important');
+							
+							let currentUser = document.getElementById('name').value;
+							if(loadData[i].userName == currentUser){
+								content = "<b>"+"Me"+":</b>" + content;
+							}else{
+								if(loadData[i].userName){
+									content = "<b>"+loadData[i].userName+":</b>" + content;
+								}
+							}
+							
+							paragraph.innerHTML = content;
+							
+							history.appendChild(paragraph);
+							history.scrollTop = history.scrollHeight;
+						}
                     }
                 }
             });
@@ -215,16 +249,28 @@ function sendAjaxQuery(url, data) {
             let roomID = dataR.userInfo.room;
             await getChatData(roomID, (list) => {
                 let loadData = list;
-                console.log(list);
                 if (loadData.length > 0) {
-                    //get the chat data from idb
                     for (let i = 0; i < loadData.length; i++) {
-                        let content = '<b>' + 'History' + ': </b>' + loadData[i].chat + '<br>';
-                        //get the history from index.ejs file
-                        let history = document.getElementById('history');
-                        console.log(history);
-                        //add the content to history
-                        history.innerHTML += content;
+						if(roomID == loadData[i].roomID){
+							let content = loadData[i].chat;
+							let history = document.getElementById('history');
+							let paragraph = document.createElement('p');
+							paragraph.style.setProperty("margin",'0px', 'important');
+							paragraph.style.setProperty("padding",'0px', 'important');
+							
+							let currentUser = document.getElementById('name').value;
+							if(loadData[i].userName == currentUser){
+								content = "<b>"+"Me"+":</b>" + content;
+							}else{
+								if(loadData[i].userName){
+									content = "<b>"+loadData[i].userName+":</b>" + content;
+								}
+							}
+							
+							paragraph.innerHTML = content;
+							history.scrollTop = history.scrollHeight;
+							history.appendChild(paragraph);
+						}
                     }
                 }
             });

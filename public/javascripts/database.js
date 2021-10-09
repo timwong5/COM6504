@@ -5,11 +5,11 @@ const DB_NAME = 'db';
 const CHAT_STORE_NAME = 'chatData';
 const ANNOTATION_STORE_NAME = 'annotationData';
 
-
 /**
- * init two databases stores the chat records and annotations
- * @returns {Promise<void>}
+ * init two databases
+ * stores the chat records and annotations
  */
+
 async function initDatabase() {
     if (!db) {
         db = await idb.openDB(DB_NAME, 2, {
@@ -40,12 +40,6 @@ window.initDatabase = initDatabase;
 
 
 //abstract these functions
-/**
- * the function store data from db
- * @param data
- * @param storeName
- * @returns {Promise<void>}
- */
 async function storeData(data, storeName){
     console.log('inserting: '+JSON.stringify(data));
     if (db == null){
@@ -63,7 +57,7 @@ async function storeData(data, storeName){
         let request = await index.getAll();
         if (request.length > 0){
             store.put(data, request.roomID);
-            store.put(data, request.name);
+            //store.put(data, request.name);
         }
         //else create a new record
         else{
@@ -73,13 +67,6 @@ async function storeData(data, storeName){
     }
 }
 
-/**
- * the function get data from db
- * @param roomID
- * @param storeName
- * @param callback
- * @returns {Promise<any>}
- */
 async function getData(roomID, storeName,callback){
     if (db == null){
         await initDatabase();

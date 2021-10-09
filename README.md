@@ -7,10 +7,8 @@
 `http://www.baidu.com/img/bdlogo.png`
 ## To read the documentation
 Click the doc\index.html to read it
-## Errors need to be fixed
-+ Need to claer the Browser Data at the first time running
-+ The speed of getting the annotation data is too slow - I don't know why.
-+ When refresh the index page, console shows the service-worker "uncaught (in promise) typeerror: failed to execute 'addall' on 'cache': request failed". Try not refresh the page directly when testing the project. The service-worker can use when first enter the homepage.
-+ Only can show the "History" in front of the users in Chat history - try to add.
-+ When users get chat history, they get a space line under the origin chat history. It seems that the welcome information's problem - I don't know how to solve it.
-+ Sometimes users can't get the image from the Internet - maybe cross-domain problem.
+## Some tips and error to be fixed
++ When you need to refresh the page, Please note using ctrl+F5 - It is the key point to use serviceWorker and make sure the project run correctly.
++ Actually I don't know why I need to use ctrl+F5.
++ Need to claer the Browser Data when first run this project.
++ Need two kind of browsers while two users using this project - for example, user1 in Chrome and user2 in Edge
